@@ -1,103 +1,405 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useRef } from 'react';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import { FaDownload, FaShare } from 'react-icons/fa';
+import Image from 'next/image';
+import './App.css';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    const [menuTitle, setMenuTitle] = useState('Masters Club Dinner');
+    const [menuDate, setMenuDate] = useState('April 10, 2023');
+    const [appetizers, setAppetizers] = useState([
+        { name: 'Pimento Cheese', description: 'Southern classic with sharp cheddar and pimentos' },
+        { name: 'Georgia Peach Salad', description: 'Fresh peaches with mixed greens and vinaigrette' }
+    ]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    const [soup, setSoup] = useState([
+        { name: 'Green Jacket Salad', description: 'Fresh greens with house dressing' },
+    ]);
+    const [mainCourses, setMainCourses] = useState([
+        { name: 'Augusta National Clubhouse Burger', description: 'Premium beef with special sauce and fixings' },
+        { name: 'Grilled Chicken', description: 'Herb-marinated chicken breast with lemon' }
+    ]);
+    const [desserts, setDesserts] = useState([
+        { name: 'Georgia Peach Cobbler', description: 'Warm cobbler with vanilla ice cream' },
+    ]);
+    const [honorText, setHonorText] = useState('Served in Honor of Your Name Here');
+    const menuRef = useRef(null);
+
+    // Character limits
+    const MAX_TITLE_LENGTH = 50;
+    const MAX_DATE_LENGTH = 30;
+    const MAX_DISH_NAME_LENGTH = 40;
+    const MAX_DISH_DESCRIPTION_LENGTH = 100;
+    const MAX_HONOR_TEXT_LENGTH = 80;
+
+    // Sanitize input to prevent XSS
+    const sanitizeInput = (input) => {
+        if (typeof input !== 'string') return '';
+        return input
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#x27;')
+            .replace(/\//g, '&#x2F;');
+    };
+
+    const handleTitleChange = (e) => {
+        const sanitizedValue = sanitizeInput(e.target.value);
+        setMenuTitle(sanitizedValue.slice(0, MAX_TITLE_LENGTH));
+    };
+
+    const handleDateChange = (e) => {
+        const sanitizedValue = sanitizeInput(e.target.value);
+        setMenuDate(sanitizedValue.slice(0, MAX_DATE_LENGTH));
+    };
+
+    const handleHonorTextChange = (e) => {
+        const sanitizedValue = sanitizeInput(e.target.value);
+        setHonorText(sanitizedValue.slice(0, MAX_HONOR_TEXT_LENGTH));
+    };
+
+    const handleItemNameChange = (index, value, section, setSection) => {
+        const sanitizedValue = sanitizeInput(value);
+        const newItems = [...section];
+        newItems[index] = { ...newItems[index], name: sanitizedValue.slice(0, MAX_DISH_NAME_LENGTH) };
+        setSection(newItems);
+    };
+
+    const handleItemDescriptionChange = (index, value, section, setSection) => {
+        const sanitizedValue = sanitizeInput(value);
+        const newItems = [...section];
+        newItems[index] = { ...newItems[index], description: sanitizedValue.slice(0, MAX_DISH_DESCRIPTION_LENGTH) };
+        setSection(newItems);
+    };
+
+    const addItem = (section, setSection) => {
+        if (section.length >= 10) {
+            alert('Maximum of 10 items allowed per section');
+            return;
+        }
+        setSection([...section, { name: '', description: '' }]);
+    };
+
+    const removeItem = (index, section, setSection) => {
+        if (section.length <= 1) {
+            alert('At least one item is required');
+            return;
+        }
+        const newItems = [...section];
+        newItems.splice(index, 1);
+        setSection(newItems);
+    };
+
+    const downloadAsPDF = () => {
+        const input = menuRef.current;
+        html2canvas(input, {
+            scale: 2, // Higher scale for better quality
+            useCORS: true,
+            logging: false,
+            width: 8.5 * 96, // Convert inches to pixels (96 DPI)
+            height: 11 * 96, // Convert inches to pixels (96 DPI)
+            windowWidth: 8.5 * 96,
+            windowHeight: 11 * 96
+        }).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'in', 'letter'); // Use 'letter' size (8.5" x 11")
+            const pdfWidth = 8.5;
+            const pdfHeight = 11;
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+            const imgX = 0; // Start from the left edge
+            const imgY = 0; // Start from the top edge
+
+            pdf.addImage(imgData, 'PNG', imgX, imgY, pdfWidth, pdfHeight);
+            pdf.save('masters-menu.pdf');
+        });
+    };
+
+    const downloadAsPNG = () => {
+        const input = menuRef.current;
+        html2canvas(input, {
+            scale: 2, // Higher scale for better quality
+            useCORS: true,
+            logging: false,
+            width: 8.5 * 96, // Convert inches to pixels (96 DPI)
+            height: 11 * 96, // Convert inches to pixels (96 DPI)
+            windowWidth: 8.5 * 96,
+            windowHeight: 11 * 96
+        }).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = 'masters-menu.png';
+            link.href = imgData;
+            link.click();
+        });
+    };
+
+    const shareMenu = async () => {
+        try {
+            const input = menuRef.current;
+            const canvas = await html2canvas(input);
+            const imgData = canvas.toDataURL('image/png');
+
+            // Convert base64 to blob
+            const blob = await (await fetch(imgData)).blob();
+
+            if (navigator.share) {
+                await navigator.share({
+                    title: 'My Masters Dinner Menu',
+                    files: [new File([blob], 'masters-menu.png', { type: 'image/png' })],
+                });
+            } else {
+                alert('Web Share API not supported in your browser');
+            }
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    };
+
+    return (
+        <div className="app-container">
+            <div className="editor-container">
+                <h1>Create Your Masters Dinner Menu</h1>
+
+                <div className="menu-editor">
+                    <div className="section">
+                        <h3>Menu Title</h3>
+                        <div className="menu-item-edit">
+                            <input
+                                type="text"
+                                value={menuTitle}
+                                onChange={handleTitleChange}
+                                placeholder="Menu Title"
+                                className="title-input"
+                                maxLength={MAX_TITLE_LENGTH}
+                            />
+                            <span className="char-count">({menuTitle.length}/{MAX_TITLE_LENGTH})</span>
+                        </div>
+                    </div>
+
+                    <div className="section">
+                        <h3>Date</h3>
+                        <div className="menu-item-edit">
+                            <input
+                                type="text"
+                                value={menuDate}
+                                onChange={handleDateChange}
+                                placeholder="Date"
+                                className="title-input"
+                                maxLength={MAX_DATE_LENGTH}
+                            />
+                            <span className="char-count">({menuDate.length}/{MAX_DATE_LENGTH})</span>
+                        </div>
+                    </div>
+
+                    <div className="section">
+                        <h3>Appetizers</h3>
+                        {appetizers.map((item, index) => (
+                            <div key={`app-${index}`} className="menu-item-edit">
+                                <input
+                                    type="text"
+                                    value={item.name}
+                                    onChange={(e) => handleItemNameChange(index, e.target.value, appetizers, setAppetizers)}
+                                    placeholder="Dish name"
+                                    className="dish-name-input"
+                                    maxLength={MAX_DISH_NAME_LENGTH}
+                                />
+                                <input
+                                    type="text"
+                                    value={item.description}
+                                    onChange={(e) => handleItemDescriptionChange(index, e.target.value, appetizers, setAppetizers)}
+                                    placeholder="Description"
+                                    className="dish-description-input"
+                                    maxLength={MAX_DISH_DESCRIPTION_LENGTH}
+                                />
+                                <button onClick={() => removeItem(index, appetizers, setAppetizers)}>Remove</button>
+                            </div>
+                        ))}
+                        <button onClick={() => addItem(appetizers, setAppetizers)}>Add Appetizer</button>
+                    </div>
+
+                    <div className="section">
+                        <h3>Soup/Salad</h3>
+                        {soup.map((item, index) => (
+                            <div key={`side-${index}`} className="menu-item-edit">
+                                <input
+                                    type="text"
+                                    value={item.name}
+                                    onChange={(e) => handleItemNameChange(index, e.target.value, soup, setSoup)}
+                                    placeholder="Dish name"
+                                    className="dish-name-input"
+                                    maxLength={MAX_DISH_NAME_LENGTH}
+                                />
+                                <input
+                                    type="text"
+                                    value={item.description}
+                                    onChange={(e) => handleItemDescriptionChange(index, e.target.value, soup, setSoup)}
+                                    placeholder="Description"
+                                    className="dish-description-input"
+                                    maxLength={MAX_DISH_DESCRIPTION_LENGTH}
+                                />
+                                <button onClick={() => removeItem(index, soup, setSoup)}>Remove</button>
+                            </div>
+                        ))}
+                        <button onClick={() => addItem(soup, setSoup)}>Add Side</button>
+                    </div>
+
+                    <div className="section">
+                        <h3>Main Courses</h3>
+                        {mainCourses.map((item, index) => (
+                            <div key={`main-${index}`} className="menu-item-edit">
+                                <input
+                                    type="text"
+                                    value={item.name}
+                                    onChange={(e) => handleItemNameChange(index, e.target.value, mainCourses, setMainCourses)}
+                                    placeholder="Dish name"
+                                    className="dish-name-input"
+                                    maxLength={MAX_DISH_NAME_LENGTH}
+                                />
+                                <input
+                                    type="text"
+                                    value={item.description}
+                                    onChange={(e) => handleItemDescriptionChange(index, e.target.value, mainCourses, setMainCourses)}
+                                    placeholder="Description"
+                                    className="dish-description-input"
+                                    maxLength={MAX_DISH_DESCRIPTION_LENGTH}
+                                />
+                                <button onClick={() => removeItem(index, mainCourses, setMainCourses)}>Remove</button>
+                            </div>
+                        ))}
+                        <button onClick={() => addItem(mainCourses, setMainCourses)}>Add Main Course</button>
+                    </div>
+
+
+
+                    <div className="section">
+                        <h3>Desserts</h3>
+                        {desserts.map((item, index) => (
+                            <div key={`dessert-${index}`} className="menu-item-edit">
+                                <input
+                                    type="text"
+                                    value={item.name}
+                                    onChange={(e) => handleItemNameChange(index, e.target.value, desserts, setDesserts)}
+                                    placeholder="Dish name"
+                                    className="dish-name-input"
+                                    maxLength={MAX_DISH_NAME_LENGTH}
+                                />
+                                <input
+                                    type="text"
+                                    value={item.description}
+                                    onChange={(e) => handleItemDescriptionChange(index, e.target.value, desserts, setDesserts)}
+                                    placeholder="Description"
+                                    className="dish-description-input"
+                                    maxLength={MAX_DISH_DESCRIPTION_LENGTH}
+                                />
+                                <button onClick={() => removeItem(index, desserts, setDesserts)}>Remove</button>
+                            </div>
+                        ))}
+                        <button onClick={() => addItem(desserts, setDesserts)}>Add Dessert</button>
+                    </div>
+
+                    <div className="section">
+                        <h3>In Honor Of</h3>
+                        <div className="menu-item-edit">
+                            <input
+                                type="text"
+                                value={honorText}
+                                onChange={handleHonorTextChange}
+                                placeholder="Honoree name"
+                                className="title-input"
+                                maxLength={MAX_HONOR_TEXT_LENGTH}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="action-buttons">
+                    <button onClick={downloadAsPDF} className="action-button">
+                        <FaDownload /> PDF
+                    </button>
+                    <button onClick={downloadAsPNG} className="action-button">
+                        <FaDownload /> PNG
+                    </button>
+                    <button onClick={shareMenu} className="action-button">
+                        <FaShare /> Share
+                    </button>
+                </div>
+            </div>
+
+            <div className="preview-container">
+                <div className="menu-preview" ref={menuRef}>
+                    <div className='menu-container'>
+                        <div className="menu-header">
+                            <Image
+                                src="/logo.png"
+                                alt="Masters Logo"
+                                className="masters-logo"
+                                width={100}
+                                height={100}
+                                priority
+                                unoptimized
+                            />
+                            <h2>{menuTitle}</h2>
+                            <p className="menu-date">{menuDate}</p>
+                        </div>
+                        <div className="menu-divider"></div>
+
+                        <div className="menu-section">
+                            <ul>
+                                {appetizers.map((item, index) => (
+                                    <li key={`app-preview-${index}`}>
+                                        <div className="dish-name">{item.name}</div>
+                                        <div className="dish-description">{item.description}</div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="menu-divider"></div>
+                        <div className="menu-section">
+                            <ul>
+                                {soup.map((item, index) => (
+                                    <li key={`side-preview-${index}`}>
+                                        <div className="dish-name">{item.name}</div>
+                                        <div className="dish-description">{item.description}</div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="menu-divider"></div>
+                        <div className="menu-section">
+                            <ul>
+                                {mainCourses.map((item, index) => (
+                                    <li key={`main-preview-${index}`}>
+                                        <div className="dish-name">{item.name}</div>
+                                        <div className="dish-description">{item.description}</div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="menu-divider"></div>
+
+                        <div className="menu-section">
+                            <ul>
+                                {desserts.map((item, index) => (
+                                    <li key={`dessert-preview-${index}`}>
+                                        <div className="dish-name">{item.name}</div>
+                                        <div className="dish-description">{item.description}</div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="menu-divider"></div>
+                        <div className="honor-section">
+                            <p>{honorText}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
 }
