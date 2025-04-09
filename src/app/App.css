@@ -1,7 +1,6 @@
 .app-container {
     display: flex;
     flex-direction: row;
-    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     font-family: 'Georgia', serif;
@@ -38,7 +37,7 @@
 }
   
 .preview-container {
-    flex: 1;
+    flex: 3;
     display: flex;
     justify-content: center;
     align-items: flex-start;
