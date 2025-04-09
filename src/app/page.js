@@ -97,7 +97,7 @@ export default function Home() {
     const downloadAsPDF = () => {
         const input = menuRef.current;
         html2canvas(input, {
-            scale: 2, // Increased from 1.5 to 2 for better quality
+            scale: 1.75,
             useCORS: true,
             logging: false,
             width: 8.5 * 96,
@@ -105,9 +105,10 @@ export default function Home() {
             windowWidth: 8.5 * 96,
             windowHeight: 11 * 96,
             imageTimeout: 0,
-            removeContainer: true
+            removeContainer: true,
+            backgroundColor: '#ffffff'
         }).then((canvas) => {
-            const imgData = canvas.toDataURL('image/jpeg', 0.95); // Increased quality from 0.85 to 0.95
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
             const pdf = new jsPDF('p', 'in', 'letter');
             const pdfWidth = 8.5;
             const pdfHeight = 11;
@@ -125,7 +126,7 @@ export default function Home() {
     const downloadAsPNG = () => {
         const input = menuRef.current;
         html2canvas(input, {
-            scale: 2, // Increased from 1.5 to 2 for better quality
+            scale: 1.75,
             useCORS: true,
             logging: false,
             width: 8.5 * 96,
@@ -133,9 +134,10 @@ export default function Home() {
             windowWidth: 8.5 * 96,
             windowHeight: 11 * 96,
             imageTimeout: 0,
-            removeContainer: true
+            removeContainer: true,
+            backgroundColor: '#ffffff'
         }).then((canvas) => {
-            const imgData = canvas.toDataURL('image/jpeg', 0.95); // Increased quality from 0.85 to 0.95
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
             const link = document.createElement('a');
             link.download = 'masters-menu.jpg';
             link.href = imgData;
@@ -147,7 +149,7 @@ export default function Home() {
         try {
             const input = menuRef.current;
             const canvas = await html2canvas(input, {
-                scale: 2,
+                scale: 1.75,
                 useCORS: true,
                 logging: false,
                 width: 8.5 * 96,
@@ -155,28 +157,46 @@ export default function Home() {
                 windowWidth: 8.5 * 96,
                 windowHeight: 11 * 96,
                 imageTimeout: 0,
-                removeContainer: true
+                removeContainer: true,
+                backgroundColor: '#ffffff'
             });
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
             const blob = await (await fetch(imgData)).blob();
 
-            if (navigator.share) {
+            // Check if we're on iOS Safari
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+            if (navigator.share && !(isIOS && isSafari && window.location.protocol === 'http:')) {
                 try {
                     await navigator.share({
                         title: 'My Masters Dinner Menu',
                         files: [new File([blob], 'masters-menu.jpg', { type: 'image/jpeg' })],
                     });
                 } catch (error) {
-                    // Handle user cancellation or other share errors
                     if (error.name !== 'AbortError') {
                         console.error('Error sharing:', error);
+                        // Fallback to download if share fails
+                        const link = document.createElement('a');
+                        link.download = 'masters-menu.jpg';
+                        link.href = imgData;
+                        link.click();
                     }
                 }
             } else {
-                alert('Web Share API not supported in your browser');
+                // Fallback to download
+                const link = document.createElement('a');
+                link.download = 'masters-menu.jpg';
+                link.href = imgData;
+                link.click();
             }
         } catch (error) {
             console.error('Error preparing share:', error);
+            // Fallback to download if anything fails
+            const link = document.createElement('a');
+            link.download = 'masters-menu.jpg';
+            link.href = imgData;
+            link.click();
         }
     };
 

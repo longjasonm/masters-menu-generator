@@ -6,9 +6,11 @@
     padding: 20px;
     font-family: 'Georgia', serif;
     text-align: center;
-  }
+    min-height: 100vh;
+    box-sizing: border-box;
+}
   
-  .editor-container {
+.editor-container {
     flex: 1;
     padding: 20px;
     background-color: #f5f5f5;
@@ -16,46 +18,52 @@
     margin-right: 20px;
     text-align: center;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
   
-  .editor-container h1 {
+.editor-container h1 {
     font-size: 1.5rem;
     font-weight: 600;
     color: #333;
     margin-bottom: 1.5rem;
-  }
+}
   
-  .editor-container h3 {
+.editor-container h3 {
     font-size: 1.1rem;
     font-weight: 500;
     color: #444;
     margin-bottom: 0.75rem;
-  }
+}
   
-  .preview-container {
+.preview-container {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     text-align: center;
-  }
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    overflow: hidden;
+}
   
-  .menu-preview {
-    width: 100%;
-    background-color: #fff;
-    color: rgb(0, 103, 71); /* Masters green */
-    text-align: center;
-    /* Standard US Letter size dimensions */
+.menu-preview {
     width: 8.5in;
     height: 11in;
+    background-color: #fff;
+    color: rgb(0, 103, 71);
+    text-align: center;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  }
+    position: relative;
+}
 
-  .menu-container {
+.menu-container {
     width: calc(8.5in - 1.5in); /* Width minus margins on both sides */
     height: calc(11in - 1.5in); /* Height minus margins on both sides */
     margin: 0.75in;
@@ -66,9 +74,9 @@
     justify-content: space-between;
     align-items: center;
     overflow: hidden; /* Prevent scrolling */
-  }
+}
   
-  .menu-header {
+.menu-header {
     text-align: center;
     margin-bottom: 1%;
     position: relative;
@@ -76,109 +84,106 @@
     font-weight: 600;
     letter-spacing: -0.02em;
     font-family: 'Source Serif 4', serif;
-  }
+}
 
-  .menu-date {
+.menu-date {
     font-size: clamp(10px, 2vw, 16px);
     font-weight: 200;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
+}
   
-  .masters-logo {
+.masters-logo {
     display: flex;
     justify-content: center;
     margin: 5% auto 1%;
     max-width: 100%;
     height: auto;
-  }
+}
   
-  .menu-section {
+.menu-section {
     margin-bottom: 1%;
     text-align: center;
     padding-top: 1%;
     width: 100%;
-  }
+}
   
-  .menu-section ul {
+.menu-section ul {
     list-style-type: none;
     padding: 0;
     text-align: center;
     width: 100%;
-  }
+}
   
-  .menu-section li {
+.menu-section li {
     margin-bottom: 1%;
     font-size: clamp(10px, 1.8vw, 14px);
     text-align: center;
-  }
+}
 
-  .menu-divider {
+.menu-divider {
     border-top: 2px solid rgb(0, 103, 71);
     margin: auto;
     width: 50px;
-  }
+}
 
-  .dish-name {
+.dish-name {
     font-weight: 600;
     font-size: clamp(12px, 3vw, 24px);
     font-family: 'Source Serif 4', serif;
     letter-spacing: -0.02em;
-  }
+}
 
-  .dish-description {
+.dish-description {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: clamp(8px, 1.8vw, 14px);
     font-style: italic;
     font-weight: 200;
-  }
+}
 
-  .honor-section {
+.honor-section {
     margin-top: 1%;
     font-size: clamp(10px, 1.8vw, 14px);
     font-style: italic;
     font-weight: 700;
     font-family: 'Source Serif 4', serif;
     padding-bottom: 2%;
-  }
+}
   
-  .menu-footer {
+.menu-footer {
     text-align: center;
     margin-top: 2%;
     font-style: italic;
-  }
+}
   
-  .menu-item-edit {
+.menu-item-edit {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
     margin-bottom: 1rem;
-    text-align: left;
-  }
+}
   
-  .menu-item-edit input {
-    padding: 0.5rem;
-    margin-bottom: 0.25rem;
+.menu-item-edit input {
+    padding: 0.75rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 0.9rem;
-    width: 100%;
-  }
+}
   
-  .char-count {
+.char-count {
     font-size: 0.8rem;
     color: #666;
     text-align: right;
     margin-top: 0.25rem;
-  }
+}
   
-  .section {
-    margin-bottom: 1.5rem;
-    padding: 1rem;
+.section {
     background-color: white;
+    padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
+}
   
-  .section button {
+.section button {
     width: 100%;
     margin-top: 0.75rem;
     padding: 0.5rem;
@@ -189,66 +194,60 @@
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 500;
-  }
+}
   
-  .section button:hover {
+.section button:hover {
     background-color: #005538;
-  }
+}
   
-  .title-input {
+.title-input, .date-input {
     width: 100%;
-    padding: 10px;
-    font-size: 18px;
-    margin-bottom: 20px;
+    padding: 0.75rem;
+    font-size: 1rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     text-align: center;
-    font-family: 'Source Serif 4', serif;
-    background-color: #fff;
-  }
+}
   
-  .action-buttons {
-    display: block;
-    justify-content: space-between;
-    margin-top: 20px;
-    text-align: center;
-  }
+.action-buttons {
+    margin-top: 1.5rem;
+}
   
-  .action-buttons h3 {
+.action-buttons h3 {
     font-size: 1rem;
     color: #444;
     margin-bottom: 1rem;
-  }
+}
   
-  .button-container {
+.button-container {
     margin-bottom: 0.75rem;
-  }
+}
   
-  .action-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+.action-button {
+    width: 100%;
     padding: 0.75rem;
+    margin-bottom: 0.5rem;
     background-color: rgb(0, 103, 71);
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
-    font-weight: 500;
-    width: 100%;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
   
-  .button-icon {
+.button-icon {
     font-size: 1rem;
-  }
+}
   
-  .action-button:hover {
+.action-button:hover {
     background-color: #005538;
-  }
+}
   
-  button {
+button {
     background-color: rgb(0, 103, 71);
     color: white;
     border: none;
@@ -257,13 +256,13 @@
     cursor: pointer;
     font-size: 14px;
     text-align: center;
-  }
+}
   
-  button:hover {
+button:hover {
     background-color: #005538;
-  }
+}
   
-  @media print {
+@media print {
     body {
       font-family: 'Georgia', serif;
       color: rgb(0, 103, 71);
@@ -327,4 +326,83 @@
       font-weight: 700;
       font-family: 'Source Serif 4', serif;
     }
-  }
+}
+
+.menu-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .editor-container {
+        margin-right: 0;
+        margin-bottom: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        height: auto;
+    }
+
+    .preview-container {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        border-radius: 0;
+        background-color: transparent;
+    }
+
+    .menu-preview {
+        transform: scale(0.8);
+        transform-origin: top center;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-container {
+        padding: 5px;
+    }
+
+    .editor-container {
+        padding: 10px;
+    }
+
+    .preview-container {
+        padding: 0;
+    }
+
+    .menu-preview {
+        transform: scale(0.7);
+    }
+
+    .title-input, .date-input {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    .menu-item-edit input {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .action-button {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+}
