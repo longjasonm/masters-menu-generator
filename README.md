@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Masters Menu Generator
 
-## Getting Started
+A web application that allows users to create, customize, and share a Masters Tournament-inspired dinner menu.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Custom Menu Creation**: Create a personalized Masters-style dinner menu with customizable sections for appetizers, soups/salads, main courses, and desserts.
+- **Real-time Preview**: See your menu changes instantly in a realistic preview.
+- **Export Options**: Download your menu as a PNG image or PDF file.
+- **Mobile Sharing**: Share your menu directly from mobile devices using the Web Share API.
+- **Character Limits**: Built-in character limits to ensure your menu maintains its elegant layout.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technology Stack
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- Next.js for the frontend framework
+- React for UI components
+- HTML2Canvas for image generation
+- jsPDF for PDF export functionality
+- CSS for styling with responsive design
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Usage
 
-## Learn More
+1. Enter your menu title and date
+2. Add items to each menu section (appetizers, soups/salads, main courses, desserts)
+3. Customize the "In Honor Of" text
+4. Use the preview panel to see how your menu looks
+5. Download as PNG or PDF, or share directly on mobile devices
 
-To learn more about Next.js, take a look at the following resources:
+## Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Node.js (v14 or higher)
+- npm or yarn
 
-## Deploy on Vercel
+### Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Clone the repository
+2. Install dependencies: `npm install` or `yarn install`
+3. Start the development server: `npm run dev` or `yarn dev`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Contributing
+
+1. Fork the repository
+2. Create a new branch for your changes
+3. Make your changes and commit them
+4. Push your changes to your fork
+5. Create a pull request
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Disclaimer
+
+This is a personal project and is not affiliated with the Masters Tournament or Augusta National Golf Club. All Masters-related trademarks and logos are property of their respective owners.
+
+#vibe-coding
