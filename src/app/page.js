@@ -97,25 +97,27 @@ export default function Home() {
     const downloadAsPDF = () => {
         const input = menuRef.current;
         html2canvas(input, {
-            scale: 2, // Higher scale for better quality
+            scale: 1.5, // Reduced from 2 to 1.5 for smaller file size
             useCORS: true,
             logging: false,
-            width: 8.5 * 96, // Convert inches to pixels (96 DPI)
-            height: 11 * 96, // Convert inches to pixels (96 DPI)
+            width: 8.5 * 96,
+            height: 11 * 96,
             windowWidth: 8.5 * 96,
-            windowHeight: 11 * 96
+            windowHeight: 11 * 96,
+            imageTimeout: 0,
+            removeContainer: true
         }).then((canvas) => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'in', 'letter'); // Use 'letter' size (8.5" x 11")
+            const imgData = canvas.toDataURL('image/jpeg', 0.85); // Using JPEG with 85% quality
+            const pdf = new jsPDF('p', 'in', 'letter');
             const pdfWidth = 8.5;
             const pdfHeight = 11;
             const imgWidth = canvas.width;
             const imgHeight = canvas.height;
             const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-            const imgX = 0; // Start from the left edge
-            const imgY = 0; // Start from the top edge
+            const imgX = 0;
+            const imgY = 0;
 
-            pdf.addImage(imgData, 'PNG', imgX, imgY, pdfWidth, pdfHeight);
+            pdf.addImage(imgData, 'JPEG', imgX, imgY, pdfWidth, pdfHeight);
             pdf.save('masters-menu.pdf');
         });
     };
@@ -123,17 +125,19 @@ export default function Home() {
     const downloadAsPNG = () => {
         const input = menuRef.current;
         html2canvas(input, {
-            scale: 2, // Higher scale for better quality
+            scale: 1.5, // Reduced from 2 to 1.5 for smaller file size
             useCORS: true,
             logging: false,
-            width: 8.5 * 96, // Convert inches to pixels (96 DPI)
-            height: 11 * 96, // Convert inches to pixels (96 DPI)
+            width: 8.5 * 96,
+            height: 11 * 96,
             windowWidth: 8.5 * 96,
-            windowHeight: 11 * 96
+            windowHeight: 11 * 96,
+            imageTimeout: 0,
+            removeContainer: true
         }).then((canvas) => {
-            const imgData = canvas.toDataURL('image/png');
+            const imgData = canvas.toDataURL('image/jpeg', 0.85); // Using JPEG with 85% quality
             const link = document.createElement('a');
-            link.download = 'masters-menu.png';
+            link.download = 'masters-menu.jpg'; // Changed to .jpg for smaller file size
             link.href = imgData;
             link.click();
         });
@@ -275,8 +279,6 @@ export default function Home() {
                         <button onClick={() => addItem(mainCourses, setMainCourses)}>Add Main Course</button>
                     </div>
 
-
-
                     <div className="section">
                         <h3>Desserts</h3>
                         {desserts.map((item, index) => (
@@ -319,15 +321,17 @@ export default function Home() {
                 </div>
 
                 <div className="action-buttons">
-                    <button onClick={downloadAsPDF} className="action-button">
-                        <FaDownload /> PDF
-                    </button>
-                    <button onClick={downloadAsPNG} className="action-button">
-                        <FaDownload /> PNG
-                    </button>
-                    <button onClick={shareMenu} className="action-button">
-                        <FaShare /> Share
-                    </button>
+                    <h3>Print or Download Your Menu:</h3>
+                    <div className="button-container">
+                        <button onClick={downloadAsPDF} className="action-button">
+                            <FaDownload className="button-icon" />Download PDF to Print
+                        </button>
+                    </div>
+                    <div className="button-container">
+                        <button onClick={downloadAsPNG} className="action-button">
+                            <FaDownload className="button-icon" />Download as Image (.PNG)
+                        </button>
+                    </div>
                 </div>
             </div>
 
