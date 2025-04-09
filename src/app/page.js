@@ -96,8 +96,13 @@ export default function Home() {
 
     const downloadAsPDF = () => {
         const input = menuRef.current;
+        const originalTransform = input.style.transform;
+
+        // Remove any scaling for capture
+        input.style.transform = 'none';
+
         html2canvas(input, {
-            scale: 1.75,
+            scale: 2,
             useCORS: true,
             logging: false,
             width: 8.5 * 96,
@@ -108,25 +113,30 @@ export default function Home() {
             removeContainer: true,
             backgroundColor: '#ffffff'
         }).then((canvas) => {
-            const imgData = canvas.toDataURL('image/jpeg', 0.9);
-            const pdf = new jsPDF('p', 'in', 'letter');
-            const pdfWidth = 8.5;
-            const pdfHeight = 11;
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
-            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-            const imgX = 0;
-            const imgY = 0;
+            // Restore original transform
+            input.style.transform = originalTransform;
 
-            pdf.addImage(imgData, 'JPEG', imgX, imgY, pdfWidth, pdfHeight);
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'in',
+                format: 'letter'
+            });
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, 8.5, 11);
             pdf.save('masters-menu.pdf');
         });
     };
 
     const downloadAsPNG = () => {
         const input = menuRef.current;
+        const originalTransform = input.style.transform;
+
+        // Remove any scaling for capture
+        input.style.transform = 'none';
+
         html2canvas(input, {
-            scale: 1.75,
+            scale: 2,
             useCORS: true,
             logging: false,
             width: 8.5 * 96,
@@ -137,7 +147,10 @@ export default function Home() {
             removeContainer: true,
             backgroundColor: '#ffffff'
         }).then((canvas) => {
-            const imgData = canvas.toDataURL('image/jpeg', 0.9);
+            // Restore original transform
+            input.style.transform = originalTransform;
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
             const link = document.createElement('a');
             link.download = 'masters-menu.jpg';
             link.href = imgData;

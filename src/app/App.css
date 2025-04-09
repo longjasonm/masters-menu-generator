@@ -39,13 +39,18 @@
 .preview-container {
     flex: 3;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
     overflow: hidden;
+    width: 100%;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+    align-self: flex-start;
 }
   
 .menu-preview {
@@ -60,35 +65,39 @@
     align-items: center;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     position: relative;
+    margin: 1rem 0;
 }
 
 .menu-container {
-    width: calc(8.5in - 1.5in); /* Width minus margins on both sides */
-    height: calc(11in - 1.5in); /* Height minus margins on both sides */
+    width: calc(8.5in - 1.5in);
+    height: calc(11in - 1.5in);
     margin: 0.75in;
     padding: 0.5in;
-    border: 4px solid rgb(0, 103, 71); /* Masters green border */
+    border: 4px solid #005e23;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    overflow: hidden; /* Prevent scrolling */
+    overflow: hidden;
+    box-sizing: border-box;
 }
   
 .menu-header {
     text-align: center;
-    margin-bottom: 1%;
+    margin-bottom: 2%;
     position: relative;
     font-size: clamp(14px, 4vw, 32px);
     font-weight: 600;
     letter-spacing: -0.02em;
     font-family: 'Source Serif 4', serif;
+    width: 100%;
 }
 
 .menu-date {
     font-size: clamp(10px, 2vw, 16px);
     font-weight: 200;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin-bottom: 2%;
 }
   
 .masters-logo {
@@ -100,10 +109,12 @@
 }
   
 .menu-section {
-    margin-bottom: 1%;
     text-align: center;
-    padding-top: 1%;
     width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
   
 .menu-section ul {
@@ -111,17 +122,19 @@
     padding: 0;
     text-align: center;
     width: 100%;
+    margin: 0;
 }
   
 .menu-section li {
-    margin-bottom: 1%;
+    margin-bottom: 2%;
     font-size: clamp(10px, 1.8vw, 14px);
     text-align: center;
+    line-height: 1.4;
 }
 
 .menu-divider {
-    border-top: 2px solid rgb(0, 103, 71);
-    margin: auto;
+    border-top: 2px solid #005e23;
+    margin: 2% auto;
     width: 50px;
 }
 
@@ -130,6 +143,7 @@
     font-size: clamp(12px, 3vw, 24px);
     font-family: 'Source Serif 4', serif;
     letter-spacing: -0.02em;
+    margin-bottom: 1%;
 }
 
 .dish-description {
@@ -137,21 +151,25 @@
     font-size: clamp(8px, 1.8vw, 14px);
     font-style: italic;
     font-weight: 200;
+    margin-bottom: 2%;
+    line-height: 1.4;
 }
 
 .honor-section {
-    margin-top: 1%;
+    margin-top: 2%;
     font-size: clamp(10px, 1.8vw, 14px);
     font-style: italic;
     font-weight: 700;
     font-family: 'Source Serif 4', serif;
     padding-bottom: 2%;
+    width: 100%;
 }
   
 .menu-footer {
     text-align: center;
     margin-top: 2%;
     font-style: italic;
+    width: 100%;
 }
   
 .menu-item-edit {
@@ -186,7 +204,7 @@
     width: 100%;
     margin-top: 0.75rem;
     padding: 0.5rem;
-    background-color: rgb(0, 103, 71);
+    background-color: #005e23;
     color: white;
     border: none;
     border-radius: 4px;
@@ -209,45 +227,44 @@
 }
   
 .action-buttons {
-    margin-top: 1.5rem;
-}
-  
-.action-buttons h3 {
-    font-size: 1rem;
-    color: #444;
-    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem 0;
+    width: 100%;
 }
   
 .button-container {
-    margin-bottom: 0.75rem;
+    width: 100%;
 }
   
 .action-button {
     width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-    background-color: rgb(0, 103, 71);
-    color: white;
+    padding: 12px 20px;
+    background-color: #fcf400;
+    color: #000;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-weight: bold;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 8px;
+    transition: background-color 0.2s;
 }
   
 .button-icon {
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
   
 .action-button:hover {
-    background-color: #005538;
+    background-color: #ebe300;
 }
   
 button {
-    background-color: rgb(0, 103, 71);
+    background-color: #005e23;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -264,7 +281,7 @@ button:hover {
 @media print {
     body {
       font-family: 'Georgia', serif;
-      color: rgb(0, 103, 71);
+      color: #005e23;
       margin: 0;
       padding: 0;
     }
@@ -291,7 +308,7 @@ button:hover {
       box-shadow: none;
       padding: 0.5in;
       margin: 0 auto;
-      border: 4px solid rgb(0, 103, 71); /* Keep Masters green border for printing */
+      border: 4px solid #005e23; /* Keep Masters green border for printing */
       box-sizing: border-box;
     }
     
@@ -313,7 +330,7 @@ button:hover {
     }
     
     .menu-divider {
-      border-top: 2px solid rgb(0, 103, 71);
+      border-top: 2px solid #005e23;
       margin: auto;
       width: 20%;
     }
@@ -359,17 +376,68 @@ button:hover {
     }
 
     .preview-container {
+        position: relative;
+        top: 0;
         width: 100%;
         padding: 0;
         margin: 0;
-        border-radius: 0;
-        background-color: transparent;
     }
 
     .menu-preview {
         transform: scale(0.8);
         transform-origin: top center;
-        margin: 0 auto;
+        margin: 0.5rem 0;
+    }
+
+    .action-button {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+
+    .menu-container {
+        margin: 0.5in;
+        padding: 0.25in;
+    }
+
+    .menu-header {
+        margin-bottom: 3%;
+    }
+
+    .menu-date {
+        margin-bottom: 3%;
+    }
+
+    .masters-logo {
+        margin: 3% auto;
+    }
+
+    .menu-section {
+        margin-bottom: 3%;
+    }
+
+    .menu-section li {
+        margin-bottom: 3%;
+    }
+
+    .menu-divider {
+        margin: 3% auto;
+    }
+
+    .dish-name {
+        margin-bottom: 2%;
+    }
+
+    .dish-description {
+        margin-bottom: 3%;
+    }
+
+    .honor-section {
+        margin-top: 3%;
+        padding-bottom: 3%;
+    }
+
+    .menu-footer {
+        margin-top: 3%;
     }
 }
 
@@ -401,7 +469,53 @@ button:hover {
     }
 
     .action-button {
-        padding: 0.5rem;
-        font-size: 0.8rem;
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+
+    .menu-container {
+        margin: 0.25in;
+        padding: 0.15in;
+    }
+
+    .menu-header {
+        margin-bottom: 4%;
+    }
+
+    .menu-date {
+        margin-bottom: 4%;
+    }
+
+    .masters-logo {
+        margin: 4% auto;
+    }
+
+    .menu-section {
+        margin-bottom: 4%;
+    }
+
+    .menu-section li {
+        margin-bottom: 4%;
+    }
+
+    .menu-divider {
+        margin: 4% auto;
+    }
+
+    .dish-name {
+        margin-bottom: 3%;
+    }
+
+    .dish-description {
+        margin-bottom: 4%;
+    }
+
+    .honor-section {
+        margin-top: 4%;
+        padding-bottom: 4%;
+    }
+
+    .menu-footer {
+        margin-top: 4%;
     }
 }
