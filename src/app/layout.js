@@ -18,7 +18,10 @@ const sourceSerif4 = Source_Serif_4({
 
 export const metadata = {
   title: "Masters Menu Generator",
-  description: "A web application that allows users to create, customize, and share a Masters Tournament-inspired dinner menu. NOT AFFILIATED WITH THE MASTERS TOURNAMENT OR AUGUSTA NATIONAL GOLF CLUB.",
+  description: "Create beautiful Masters-themed dinner menus",
+  icons: {
+    icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⛳</text></svg>'
+  }
 };
 
 export default function RootLayout({ children }) {
