@@ -149,11 +149,6 @@ export default function Home() {
     const downloadAsPNG = () => {
         const input = menuRef.current;
         const originalTransform = input.style.transform;
-        const menuContainer = input.querySelector('.menu-container');
-
-        // Add export class for proper dimensions
-        input.classList.add('export');
-        menuContainer.classList.add('export');
 
         // Remove any scaling for capture
         input.style.transform = 'none';
@@ -170,16 +165,12 @@ export default function Home() {
             removeContainer: true,
             backgroundColor: '#ffffff'
         }).then((canvas) => {
-            // Restore original transform and remove export class
+            // Restore original transform
             input.style.transform = originalTransform;
-            input.classList.remove('export');
-            menuContainer.classList.remove('export');
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            const link = document.createElement('a');
-            link.download = 'masters-menu.jpg';
-            link.href = imgData;
-            link.click();
+            // Open image in new tab instead of downloading
+            window.open(imgData, '_blank');
         });
     };
 
