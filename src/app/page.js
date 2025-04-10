@@ -169,13 +169,63 @@ export default function Home() {
             input.style.transform = originalTransform;
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            // Create a temporary anchor element
-            const link = document.createElement('a');
-            link.href = imgData;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            // Programmatically click the link
-            link.click();
+
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+
+            // Create image container
+            const imgContainer = document.createElement('div');
+            imgContainer.style.position = 'relative';
+            imgContainer.style.maxWidth = '90%';
+            imgContainer.style.maxHeight = '90%';
+
+            // Create image
+            const img = document.createElement('img');
+            img.src = imgData;
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100%';
+            img.style.objectFit = 'contain';
+
+            // Create close button
+            const closeButton = document.createElement('button');
+            closeButton.innerHTML = '×';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '-40px';
+            closeButton.style.right = '0';
+            closeButton.style.background = 'none';
+            closeButton.style.border = 'none';
+            closeButton.style.color = 'white';
+            closeButton.style.fontSize = '30px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.style.padding = '5px 10px';
+
+            // Add click handler to close modal
+            closeButton.onclick = () => {
+                document.body.removeChild(modal);
+            };
+
+            // Add click handler to modal background to close
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            };
+
+            // Assemble and add to document
+            imgContainer.appendChild(img);
+            imgContainer.appendChild(closeButton);
+            modal.appendChild(imgContainer);
+            document.body.appendChild(modal);
         });
     };
 
