@@ -169,8 +169,13 @@ export default function Home() {
             input.style.transform = originalTransform;
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            // Open image in new tab instead of downloading
-            window.open(imgData, '_blank');
+            // Create a temporary anchor element
+            const link = document.createElement('a');
+            link.href = imgData;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            // Programmatically click the link
+            link.click();
         });
     };
 
