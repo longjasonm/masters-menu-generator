@@ -232,12 +232,6 @@ export default function Home() {
     const shareMenu = async () => {
         try {
             const input = menuRef.current;
-            const menuContainer = input.querySelector('.menu-container');
-
-            // Add export class for proper dimensions
-            input.classList.add('export');
-            menuContainer.classList.add('export');
-
             const canvas = await html2canvas(input, {
                 scale: 1.75,
                 useCORS: true,
@@ -250,11 +244,6 @@ export default function Home() {
                 removeContainer: true,
                 backgroundColor: '#ffffff'
             });
-
-            // Remove export class
-            input.classList.remove('export');
-            menuContainer.classList.remove('export');
-
             const imgData = canvas.toDataURL('image/jpeg', 0.9);
             const blob = await (await fetch(imgData)).blob();
 
@@ -266,6 +255,7 @@ export default function Home() {
                 try {
                     await navigator.share({
                         title: 'My Masters Dinner Menu',
+                        text: 'Make yours here: ' + window.location.href,
                         files: [new File([blob], 'masters-menu.jpg', { type: 'image/jpeg' })],
                     });
                 } catch (error) {
