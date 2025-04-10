@@ -28,6 +28,17 @@ export default function Home() {
     const [honorText, setHonorText] = useState('Served in Honor of Your Name Here');
     const menuRef = useRef(null);
 
+    // Track whether fields have been edited
+    const [isTitleEdited, setIsTitleEdited] = useState(false);
+    const [isDateEdited, setIsDateEdited] = useState(false);
+    const [isHonorTextEdited, setIsHonorTextEdited] = useState(false);
+    const [editedItems, setEditedItems] = useState({
+        appetizers: [],
+        soup: [],
+        mainCourses: [],
+        desserts: []
+    });
+
     // Character limits
     const MAX_TITLE_LENGTH = 50;
     const MAX_DATE_LENGTH = 30;
@@ -97,6 +108,11 @@ export default function Home() {
     const downloadAsPDF = () => {
         const input = menuRef.current;
         const originalTransform = input.style.transform;
+        const menuContainer = input.querySelector('.menu-container');
+
+        // Add export class for proper dimensions
+        input.classList.add('export');
+        menuContainer.classList.add('export');
 
         // Remove any scaling for capture
         input.style.transform = 'none';
@@ -113,8 +129,10 @@ export default function Home() {
             removeContainer: true,
             backgroundColor: '#ffffff'
         }).then((canvas) => {
-            // Restore original transform
+            // Restore original transform and remove export class
             input.style.transform = originalTransform;
+            input.classList.remove('export');
+            menuContainer.classList.remove('export');
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
             const pdf = new jsPDF({
@@ -151,16 +169,75 @@ export default function Home() {
             input.style.transform = originalTransform;
 
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            const link = document.createElement('a');
-            link.download = 'masters-menu.jpg';
-            link.href = imgData;
-            link.click();
+
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+
+            // Create image container
+            const imgContainer = document.createElement('div');
+            imgContainer.style.position = 'relative';
+            imgContainer.style.maxWidth = '90%';
+            imgContainer.style.maxHeight = '90%';
+
+            // Create image
+            const img = document.createElement('img');
+            img.src = imgData;
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '100%';
+            img.style.objectFit = 'contain';
+
+            // Create close button
+            const closeButton = document.createElement('button');
+            closeButton.innerHTML = '×';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '-40px';
+            closeButton.style.right = '0';
+            closeButton.style.background = 'none';
+            closeButton.style.border = 'none';
+            closeButton.style.color = 'white';
+            closeButton.style.fontSize = '30px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.style.padding = '5px 10px';
+
+            // Add click handler to close modal
+            closeButton.onclick = () => {
+                document.body.removeChild(modal);
+            };
+
+            // Add click handler to modal background to close
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            };
+
+            // Assemble and add to document
+            imgContainer.appendChild(img);
+            imgContainer.appendChild(closeButton);
+            modal.appendChild(imgContainer);
+            document.body.appendChild(modal);
         });
     };
 
     const shareMenu = async () => {
         try {
             const input = menuRef.current;
+            const menuContainer = input.querySelector('.menu-container');
+
+            // Add export class for proper dimensions
+            input.classList.add('export');
+            menuContainer.classList.add('export');
+
             const canvas = await html2canvas(input, {
                 scale: 1.75,
                 useCORS: true,
@@ -173,6 +250,11 @@ export default function Home() {
                 removeContainer: true,
                 backgroundColor: '#ffffff'
             });
+
+            // Remove export class
+            input.classList.remove('export');
+            menuContainer.classList.remove('export');
+
             const imgData = canvas.toDataURL('image/jpeg', 0.9);
             const blob = await (await fetch(imgData)).blob();
 
@@ -213,6 +295,51 @@ export default function Home() {
         }
     };
 
+    const handleTitleFocus = (e) => {
+        if (!isTitleEdited) {
+            setMenuTitle('');
+            setIsTitleEdited(true);
+        }
+    };
+
+    const handleDateFocus = (e) => {
+        if (!isDateEdited) {
+            setMenuDate('');
+            setIsDateEdited(true);
+        }
+    };
+
+    const handleHonorTextFocus = (e) => {
+        if (!isHonorTextEdited) {
+            setHonorText('');
+            setIsHonorTextEdited(true);
+        }
+    };
+
+    const handleItemNameFocus = (index, section, setSection, sectionName) => {
+        if (!editedItems[sectionName]?.includes(index)) {
+            const newItems = [...section];
+            newItems[index] = { ...newItems[index], name: '' };
+            setSection(newItems);
+            setEditedItems(prev => ({
+                ...prev,
+                [sectionName]: [...(prev[sectionName] || []), index]
+            }));
+        }
+    };
+
+    const handleItemDescriptionFocus = (index, section, setSection, sectionName) => {
+        if (!editedItems[sectionName]?.includes(index)) {
+            const newItems = [...section];
+            newItems[index] = { ...newItems[index], description: '' };
+            setSection(newItems);
+            setEditedItems(prev => ({
+                ...prev,
+                [sectionName]: [...(prev[sectionName] || []), index]
+            }));
+        }
+    };
+
     return (
         <div className="app-container">
             <div className="editor-container">
@@ -226,6 +353,7 @@ export default function Home() {
                                 type="text"
                                 value={menuTitle}
                                 onChange={handleTitleChange}
+                                onFocus={handleTitleFocus}
                                 placeholder="Menu Title"
                                 className="title-input"
                                 maxLength={MAX_TITLE_LENGTH}
@@ -241,6 +369,7 @@ export default function Home() {
                                 type="text"
                                 value={menuDate}
                                 onChange={handleDateChange}
+                                onFocus={handleDateFocus}
                                 placeholder="Date"
                                 className="title-input"
                                 maxLength={MAX_DATE_LENGTH}
@@ -257,6 +386,7 @@ export default function Home() {
                                     type="text"
                                     value={item.name}
                                     onChange={(e) => handleItemNameChange(index, e.target.value, appetizers, setAppetizers)}
+                                    onFocus={() => handleItemNameFocus(index, appetizers, setAppetizers, 'appetizers')}
                                     placeholder="Dish name"
                                     className="dish-name-input"
                                     maxLength={MAX_DISH_NAME_LENGTH}
@@ -265,6 +395,7 @@ export default function Home() {
                                     type="text"
                                     value={item.description}
                                     onChange={(e) => handleItemDescriptionChange(index, e.target.value, appetizers, setAppetizers)}
+                                    onFocus={() => handleItemDescriptionFocus(index, appetizers, setAppetizers, 'appetizers')}
                                     placeholder="Description"
                                     className="dish-description-input"
                                     maxLength={MAX_DISH_DESCRIPTION_LENGTH}
@@ -283,6 +414,7 @@ export default function Home() {
                                     type="text"
                                     value={item.name}
                                     onChange={(e) => handleItemNameChange(index, e.target.value, soup, setSoup)}
+                                    onFocus={() => handleItemNameFocus(index, soup, setSoup, 'soup')}
                                     placeholder="Dish name"
                                     className="dish-name-input"
                                     maxLength={MAX_DISH_NAME_LENGTH}
@@ -291,6 +423,7 @@ export default function Home() {
                                     type="text"
                                     value={item.description}
                                     onChange={(e) => handleItemDescriptionChange(index, e.target.value, soup, setSoup)}
+                                    onFocus={() => handleItemDescriptionFocus(index, soup, setSoup, 'soup')}
                                     placeholder="Description"
                                     className="dish-description-input"
                                     maxLength={MAX_DISH_DESCRIPTION_LENGTH}
@@ -309,6 +442,7 @@ export default function Home() {
                                     type="text"
                                     value={item.name}
                                     onChange={(e) => handleItemNameChange(index, e.target.value, mainCourses, setMainCourses)}
+                                    onFocus={() => handleItemNameFocus(index, mainCourses, setMainCourses, 'mainCourses')}
                                     placeholder="Dish name"
                                     className="dish-name-input"
                                     maxLength={MAX_DISH_NAME_LENGTH}
@@ -317,6 +451,7 @@ export default function Home() {
                                     type="text"
                                     value={item.description}
                                     onChange={(e) => handleItemDescriptionChange(index, e.target.value, mainCourses, setMainCourses)}
+                                    onFocus={() => handleItemDescriptionFocus(index, mainCourses, setMainCourses, 'mainCourses')}
                                     placeholder="Description"
                                     className="dish-description-input"
                                     maxLength={MAX_DISH_DESCRIPTION_LENGTH}
@@ -335,6 +470,7 @@ export default function Home() {
                                     type="text"
                                     value={item.name}
                                     onChange={(e) => handleItemNameChange(index, e.target.value, desserts, setDesserts)}
+                                    onFocus={() => handleItemNameFocus(index, desserts, setDesserts, 'desserts')}
                                     placeholder="Dish name"
                                     className="dish-name-input"
                                     maxLength={MAX_DISH_NAME_LENGTH}
@@ -343,6 +479,7 @@ export default function Home() {
                                     type="text"
                                     value={item.description}
                                     onChange={(e) => handleItemDescriptionChange(index, e.target.value, desserts, setDesserts)}
+                                    onFocus={() => handleItemDescriptionFocus(index, desserts, setDesserts, 'desserts')}
                                     placeholder="Description"
                                     className="dish-description-input"
                                     maxLength={MAX_DISH_DESCRIPTION_LENGTH}
@@ -360,6 +497,7 @@ export default function Home() {
                                 type="text"
                                 value={honorText}
                                 onChange={handleHonorTextChange}
+                                onFocus={handleHonorTextFocus}
                                 placeholder="Honoree name"
                                 className="title-input"
                                 maxLength={MAX_HONOR_TEXT_LENGTH}
